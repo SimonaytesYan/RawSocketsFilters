@@ -56,6 +56,7 @@ bool checkRule(Package res_package, FilterRule rule) {
             follow_rule = false;
     }
 
+    printf("res = %d\n\n", follow_rule);
     return follow_rule; 
 }
 
