@@ -32,6 +32,10 @@ void processTCP(void* buffer, Package& res_package) {
 //        false if package did't
 bool checkRule(Package res_package, FilterRule rule) {
 
+    printf("rule:\n");
+    printPackage(rule.mask);
+    printf("pkg:\n");
+    printPackage(res_package);
     bool follow_rule = true;
     if (rule.mask.dst_ip != kNotStated && res_package.dst_ip != rule.mask.dst_ip)
         follow_rule = false;
