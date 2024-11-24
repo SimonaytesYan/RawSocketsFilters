@@ -40,7 +40,11 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     Package rule_package = {kNotStated, kNotStated, 80, 80, 
                             IPProtocolType::BROCKEN};
 
-    FilterRule rule = {rule_package, RuleType::PASS};
+    FilterRule rule = {rule_package, RuleType::DELETE};
+    std::vector<FilterRule> rules;
+    rules.push_back(rule);
+
+    FilterList list = {rules, FilterListType::BLACK_LIST};
 
     pid_t pid = fork();
     switch(pid)
@@ -49,10 +53,10 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
             perror("fork");
             exit(-1);
         case 0:
-            filter(in_sock, out_sock, rule);
+            filter(in_sock, out_sock, list);
             break;
         default:
-            filter(out_sock, in_sock, rule);
+            filter(out_sock, in_sock, list);
             break;
     }
 }

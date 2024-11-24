@@ -28,15 +28,9 @@ void processTCP(void* buffer, Package& res_package) {
     printf("dst port: %u\n", res_package.dst_port);
 }
 
-// return true, if package should go
-//        false if package shouldn't go
+// return true, if package follow rule
+//        false if package did't
 bool checkRule(Package res_package, FilterRule rule) {
-    // printf("Start checkRule\n");
-    // printf("res_package:\n");
-    // printPackage(res_package);
-
-    // printf("rule:\n");
-    // printPackage(rule.mask);
 
     bool follow_rule = true;
     if (rule.mask.dst_ip != kNotStated && res_package.dst_ip != rule.mask.dst_ip)
@@ -58,17 +52,34 @@ bool checkRule(Package res_package, FilterRule rule) {
             follow_rule = false;
     }
 
-    // printf("follow_rule = %d\n", follow_rule);
-    if (rule.type == RuleType::PASS)
-        return follow_rule;
-    if (rule.type == RuleType::DELETE)
-        return !follow_rule;
-    
-    printf("ERROR: unknown rule.type(%d)!!!!\n", rule.type);
-    return false; 
+    return follow_rule; 
 }
 
-bool processIPv4(void* buffer, FilterRule rule) {
+bool checkFilterList(Package res_package, const FilterList& rules) {
+
+    for (auto rule : rules.rules) {
+        bool follow_rule = checkRule(res_package, rule);
+
+        if (follow_rule) {
+            if (rule.type == RuleType::PASS)
+                return true;
+            if (rule.type == RuleType::DELETE)
+                return false;
+            printf("ERROR: unknown rule.type(%d)!!!!\n", rule.type);
+            return false;
+        }
+    }
+
+    if (rules.type == FilterListType::BLACK_LIST)
+        return true;
+    if (rules.type == FilterListType::WHITE_LIST)
+        return false;
+
+    printf("ERROR: unknown FilterList type(%d)!!!!\n", rules.type);
+    return false;
+}
+
+bool processIPv4(void* buffer, const FilterList& rules) {
     iphdr*         package  = (iphdr*)buffer;
     IPProtocolType protocol = (IPProtocolType)package->protocol;
 
@@ -107,5 +118,5 @@ bool processIPv4(void* buffer, FilterRule rule) {
         }
     }
 
-    return checkRule(res_package, rule);
+    return checkFilterList(res_package, rules);
 }

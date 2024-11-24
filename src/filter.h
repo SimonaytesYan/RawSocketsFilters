@@ -33,6 +33,16 @@ struct FilterRule {
     RuleType type;
 };
 
+enum class FilterListType {
+    WHITE_LIST,
+    BLACK_LIST
+};
+
+struct FilterList {
+    std::vector<FilterRule> rules;
+    FilterListType type;
+};
+
 void printPackage(Package pkg);
 
-void filter(int in_socket, int out_socket, FilterRule rule);
+void filter(int in_socket, int out_socket, const FilterList& rules);
