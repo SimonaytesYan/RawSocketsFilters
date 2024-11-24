@@ -13,6 +13,8 @@ int createSockets(int intf_ind);
 
 void filter(int in_socket, int out_socket);
 
+void startTwoWayFiltration(int in_intf, int out_intf);
+
 int main(int argc, char** argv) {
     std::cout << "Start program\n";
 
@@ -25,10 +27,29 @@ int main(int argc, char** argv) {
     int out_intf = atoi(argv[2]);       // output interface index
     std::cout << "in interface index = "  << in_intf  << "\n";
     std::cout << "out interface index = " << out_intf << "\n";
+    
+    startTwoWayFiltration(in_intf, out_intf);
+}
 
+// Fork proccess and start two-way filtration 
+void startTwoWayFiltration(int in_intf, int out_intf) {
     int in_sock  = createSockets(in_intf);
     int out_sock = createSockets(out_intf);
-    filter(in_sock, out_sock);
+    // filter(in_sock, out_sock);
+
+    pid_t pid = fork();
+    switch(pid)
+    {
+        case -1:
+            perror("fork");
+            exit(-1);
+        case 0:
+            filter(in_sock, out_sock);
+            break;
+        default:
+            filter(out_sock, in_sock);
+            break;
+    }
 }
 
 // Create raw socket with given interface index 
