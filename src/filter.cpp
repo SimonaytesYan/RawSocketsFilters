@@ -18,7 +18,7 @@ enum class EthProtocolType {
 };
 
 // Function, that filter all traffic, going through given raw socket 
-void filter(int in_socket, int out_socket, FilterRule rule) {
+void filter(int in_socket, int out_socket, const FilterList& list) {
 
     char buffer[kSize] = {};
     while (true) {
