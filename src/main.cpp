@@ -70,6 +70,7 @@ int createSockets(int intf_ind) {
 
 enum ProtocolType {
     IPv4 = 0x0800,
+    IPv6  = 0x86dd,
     ARP  = 0x0806
 };
 
@@ -92,9 +93,12 @@ void filter(int in_socket, int out_socket) {
         ProtocolType protocol = (ProtocolType)(buffer[12]*256 + buffer[13]);
 
         switch (protocol)
-            {
+        {
             case IPv4:
                 printf("IPv4\n");
+                break;
+            case IPv6:
+                printf("IPv6\n");
                 break;
             
             case ARP:
