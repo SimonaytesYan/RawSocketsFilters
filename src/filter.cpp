@@ -11,14 +11,14 @@
 
 const size_t kSize = 1000;
 
-enum EthProtocolType {
+enum class EthProtocolType {
     IPv4 = 0x0800,
     IPv6 = 0x86dd,
     ARP  = 0x0806
 };
 
 // Function, that filter all traffic, going through given raw socket 
-void filter(int in_socket, int out_socket) {
+void filter(int in_socket, int out_socket, FilterRule rule) {
 
     char buffer[kSize] = {};
     while (true) {
@@ -37,17 +37,18 @@ void filter(int in_socket, int out_socket) {
         
         EthProtocolType protocol = (EthProtocolType)(buffer[12]*256 + buffer[13]);
 
+        bool package_follow_rule = true; 
         switch (protocol)
         {
-            case IPv4:
-                processIPv4(buffer + sizeof(ether_header));
+            case EthProtocolType::IPv4:
+                package_follow_rule = processIPv4(buffer + sizeof(ether_header), rule);
                 printf("IPv4\n");
                 break;
-            case IPv6:
+            case EthProtocolType::IPv6:
                 printf("IPv6\n");
                 break;
             
-            case ARP:
+            case EthProtocolType::ARP:
                 printf("ARP\n");
                 break;
 
@@ -55,7 +56,10 @@ void filter(int in_socket, int out_socket) {
                 printf("Something other\n");
                 break;
         }
-
-        write(out_socket, buffer, size);
+        
+        if (package_follow_rule)
+            write(out_socket, buffer, size);
+        else 
+            printf("Package do not follow rule");
 	}
 }

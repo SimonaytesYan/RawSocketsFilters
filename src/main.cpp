@@ -33,6 +33,9 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     int out_sock = createSockets(out_intf);
     // filter(in_sock, out_sock);
 
+    FilterRule rule = {kNotStated, kNotStated, kNotStated, kNotStated, 
+                       FilterRuleProtocol::NOT_STATED};
+
     pid_t pid = fork();
     switch(pid)
     {
@@ -40,10 +43,10 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
             perror("fork");
             exit(-1);
         case 0:
-            filter(in_sock, out_sock);
+            filter(in_sock, out_sock, rule);
             break;
         default:
-            filter(out_sock, in_sock);
+            filter(out_sock, in_sock, rule);
             break;
     }
 }

@@ -1,4 +1,5 @@
 #include "ipv4.h"
+#include "filter.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -6,48 +7,67 @@
 #include <linux/udp.h>
 #include <linux/tcp.h>
 
-enum IPProtocolType {
-    ICMP = 1,
-    TCP  = 6,
-    UDP  = 17,
-    STP  = 118
-};
 
-void processUDP(void* buffer) {
+bool processUDP(void* buffer, FilterRule rule) {
     udphdr* package = (udphdr*)buffer;
 
     printf("src port: %d\n", package->source);
     printf("dst port: %d\n", package->dest);
+
+    if (rule.dst_port != kNotStated && rule.dst_port != package->source)
+        return false;
+    if (rule.src_port != kNotStated && rule.src_port != package->dest)
+        return false;
+
+    return true;
 }
 
-void processTCP(void* buffer) {
+bool processTCP(void* buffer, FilterRule rule) {
     tcphdr* package = (tcphdr*)buffer;
 
     printf("src port: %d\n", package->source);
     printf("dst port: %d\n", package->dest);
+
+    if (rule.dst_port != kNotStated && rule.dst_port != package->source)
+        return false;
+    if (rule.src_port != kNotStated && rule.src_port != package->dest)
+        return false;
+
+    return true;
 }
 
-void processIPv4(void* buffer) {
+bool processIPv4(void* buffer, FilterRule rule) {
     iphdr* package = (iphdr*)buffer;
+    IPProtocolType protocol = (IPProtocolType)package->protocol;
 
     printf("src: %x\n", package->saddr);
     printf("dst: %x\n", package->daddr);
     printf("protocol: ");
+
+    if (rule.dst_ip != kNotStated && rule.dst_ip != package->daddr)
+        return false;
+    if (rule.src_ip != kNotStated && rule.src_ip != package->saddr)
+        return false;
     
-    switch (package->protocol)
+    if (rule.protocol == FilterRuleProtocol::TCP && protocol != IPProtocolType::TCP)
+        return false;
+    if (rule.protocol == FilterRuleProtocol::UDP && protocol != IPProtocolType::UDP)
+        return false;
+    
+    switch (protocol)
     {
-        case ICMP:
+        case IPProtocolType::ICMP:
             printf("ICMP\n");
             break;
-        case TCP:
+        case IPProtocolType::TCP:
             printf("TCP\n");
-            processTCP((char*)buffer + sizeof(iphdr));
+            return processTCP((char*)buffer + sizeof(iphdr), rule);
             break;
-        case UDP:
+        case IPProtocolType::UDP:
             printf("UDP\n");
-            processUDP((char*)buffer + sizeof(iphdr));
+            return processUDP((char*)buffer + sizeof(iphdr), rule);
             break;
-        case STP:
+        case IPProtocolType::STP:
             printf("STP\n");
             break;
     
@@ -55,4 +75,6 @@ void processIPv4(void* buffer) {
             printf("Something other: %d\n", package->protocol);
             break;
     }
+
+    return true;
 }
