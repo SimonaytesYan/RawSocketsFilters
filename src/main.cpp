@@ -40,7 +40,7 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     Package rule_package = {kNotStated, kNotStated, 80, 80, 
                             IPProtocolType::BROCKEN};
 
-    FilterRule rule = {rule_package, RuleType::DELETE};
+    FilterRule rule = {rule_package, RuleType::PASS};
     std::vector<FilterRule> rules;
     rules.push_back(rule);
 
