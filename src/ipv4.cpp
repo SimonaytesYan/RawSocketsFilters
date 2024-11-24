@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <linux/ip.h>
+#include <linux/udp.h>
+#include <linux/tcp.h>
 
 enum IPProtocolType {
     ICMP = 1,
@@ -11,7 +13,21 @@ enum IPProtocolType {
     STP  = 118
 };
 
-void processIPv4(void* buffer, size_t size) {
+void processUDP(void* buffer) {
+    udphdr* package = (udphdr*)buffer;
+
+    printf("src port: %d\n", package->source);
+    printf("dst port: %d\n", package->dest);
+}
+
+void processTCP(void* buffer) {
+    tcphdr* package = (tcphdr*)buffer;
+
+    printf("src port: %d\n", package->source);
+    printf("dst port: %d\n", package->dest);
+}
+
+void processIPv4(void* buffer) {
     iphdr* package = (iphdr*)buffer;
 
     printf("src: %x\n", package->saddr);
@@ -25,9 +41,11 @@ void processIPv4(void* buffer, size_t size) {
             break;
         case TCP:
             printf("TCP\n");
+            processTCP((char*)buffer + sizeof(iphdr));
             break;
         case UDP:
             printf("UDP\n");
+            processUDP((char*)buffer + sizeof(iphdr));
             break;
         case STP:
             printf("STP\n");
