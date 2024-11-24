@@ -4,14 +4,16 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <linux/ip.h>
-#include <linux/udp.h>
 #include <linux/tcp.h>
+#include <linux/udp.h>
+#include <netinet/in.h>
 
 void processUDP(void* buffer, Package& res_package) {
     udphdr* package = (udphdr*)buffer;
 
-    printf("src port: %u\n", package->source);
-    printf("dst port: %u\n", package->dest);
+    printf("src port: %u\n", ntohs(package->source));
+    printf("dst port: %u\n", ntohs(package->dest));
+
 
     res_package.dst_port = package->dest;
     res_package.src_port = package->source;
