@@ -2,4 +2,4 @@
 *.o
 bin
 obj
-gns3/filter_check/project-files/captures
+gns3/filter_check/project-files
