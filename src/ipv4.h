@@ -9,8 +9,8 @@ enum class IPProtocolType {
     BROCKEN = 255,
 };
 
-struct FilterRule;
+struct FilterList;
 
 // return true, if package should go
 //        false if package shouldn't go
-bool processIPv4(void* buffer, FilterRule rule);
+bool processIPv4(void* buffer, const FilterList& rules);
