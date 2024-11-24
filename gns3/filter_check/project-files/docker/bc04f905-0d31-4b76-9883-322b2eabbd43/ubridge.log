@@ -1,0 +1,6 @@
+uBridge version 0.9.19 running with libpcap version 1.10.1 (with TPACKET_V3)
+Hypervisor TCP control server started (IP 0.0.0.0 port 40963).
+UDP tunnel connecting from local port 20008 to IPv4 address 127.0.0.1 on port 20009
+Source NIO listener thread for bridge0 has started
+Destination NIO listener thread for bridge0 has started
+Capturing to file '/D/Desktop/Projects/ComputerNets/Filter_HW5/gns3/filter_check/project-files/captures/rerand0m-cn-alpine-1_eth0_to_filter_eth0.pcap'

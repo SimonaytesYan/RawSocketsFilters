@@ -10,8 +10,8 @@ OBJ = obj
 
 BIN_FILE = $(BIN)/run
 
-IN_INTERFACE = 2
-OUT_INTERFACE = 2
+IN_INTERFACE = 595
+OUT_INTERFACE = 598
 
 all: create_dir
 	g++ $(C_FLAGS) $(SRC)/main.cpp $(C_FLAGS) -o $(BIN_FILE)
@@ -20,6 +20,7 @@ run:
 	sudo ./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
 
 alpine: configure all
+	./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
 
 configure:
 	bash scripts/configure_alpine.sh
@@ -27,7 +28,6 @@ configure:
 clean:
 	rm -r $(BIN)
 	rm -r $(OBJ)
-
 
 create_dir:
 	-@mkdir -p $(BIN)
