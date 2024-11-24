@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <vector>
+
+#include "ipv4.h"
 
 enum class FilterRuleProtocol {
     UDP,
@@ -8,16 +11,26 @@ enum class FilterRuleProtocol {
     NOT_STATED
 };
 
+enum class RuleType {
+    PASS,
+    DELETE
+};
+
 const uint8_t kNotStated = -1;
 
-struct FilterRule {
+struct Package {
     uint32_t src_ip;
     uint32_t dst_ip;
 
     uint8_t src_port;
     uint8_t dst_port;
 
-    FilterRuleProtocol protocol;
+    IPProtocolType protocol;
+};
+
+struct FilterRule {
+    Package mask;
+    RuleType type; 
 };
 
 void filter(int in_socket, int out_socket, FilterRule rule);

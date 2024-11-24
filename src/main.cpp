@@ -31,10 +31,14 @@ int main(int argc, char** argv) {
 void startTwoWayFiltration(int in_intf, int out_intf) {
     int in_sock  = createSockets(in_intf);
     int out_sock = createSockets(out_intf);
-    // filter(in_sock, out_sock);
+
+    if (in_sock == -1 || out_sock == -1) {
+        std::cout << "Error during creating sockets\n";
+        return;
+    }
 
     FilterRule rule = {0x201000a, kNotStated, kNotStated, kNotStated, 
-                       FilterRuleProtocol::NOT_STATED};
+                       IPProtocolType::BROCKEN, RuleType::DELETE};
 
     pid_t pid = fork();
     switch(pid)
@@ -53,16 +57,18 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
 
 // Create raw socket with given interface index 
 int createSockets(int intf_ind) {
-    std::cout << "\nErrno before socket create: " << strerror(errno) << "\n";
     int s = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    std::cout << "Errno after socket create: " << strerror(errno) << "\n";
 
 	struct sockaddr_ll addr;
 	addr.sll_family = AF_PACKET;
 	addr.sll_protocol = htons(ETH_P_ALL);
 	addr.sll_ifindex = intf_ind;
 	bind(s, (sockaddr*)&addr, sizeof(addr));
-    std::cout << "Errno after socket bind: " << strerror(errno) << "\n\n";
+
+    if (errno != 0) {
+        std::cout << "Errno after socket bind: " << strerror(errno) << "\n\n";
+        return -1;
+    }
 
     return s;
 }

@@ -7,74 +7,97 @@
 #include <linux/udp.h>
 #include <linux/tcp.h>
 
-
-bool processUDP(void* buffer, FilterRule rule) {
+void processUDP(void* buffer, Package& res_package) {
     udphdr* package = (udphdr*)buffer;
 
     printf("src port: %d\n", package->source);
     printf("dst port: %d\n", package->dest);
 
-    if (rule.dst_port != kNotStated && rule.dst_port != package->source)
-        return false;
-    if (rule.src_port != kNotStated && rule.src_port != package->dest)
-        return false;
-
-    return true;
+    res_package.dst_port = package->dest;
+    res_package.src_port = package->source;
 }
 
-bool processTCP(void* buffer, FilterRule rule) {
+void processTCP(void* buffer, Package& res_package) {
     tcphdr* package = (tcphdr*)buffer;
 
     printf("src port: %d\n", package->source);
     printf("dst port: %d\n", package->dest);
 
-    if (rule.dst_port != kNotStated && rule.dst_port != package->source)
-        return false;
-    if (rule.src_port != kNotStated && rule.src_port != package->dest)
-        return false;
+    res_package.dst_port = package->dest;
+    res_package.src_port = package->source;
+}
 
-    return true;
+// return true, if package should go
+//        false if package shouldn't go
+bool checkRule(Package res_package, FilterRule rule) {
+
+    bool follow_rule = true;    // follow rule
+    if (rule.mask.dst_ip != kNotStated && res_package.dst_ip != rule.mask.dst_ip)
+        follow_rule = false;
+    if (rule.mask.src_ip != kNotStated && res_package.src_ip != rule.mask.src_ip)
+        follow_rule = false;
+    
+    if (rule.mask.protocol != IPProtocolType::BROCKEN &&
+        rule.mask.protocol != res_package.protocol)
+        follow_rule = false;
+
+    if (rule.mask.protocol == IPProtocolType::TCP ||
+        rule.mask.protocol == IPProtocolType::UDP) {
+        if (rule.mask.dst_port != kNotStated && 
+            res_package.dst_port != rule.mask.dst_port)
+            follow_rule = false;
+        if (rule.mask.src_port != kNotStated && 
+            res_package.src_port != rule.mask.src_port)
+            follow_rule = false;
+    }
+
+    if (rule.type == RuleType::PASS)
+        return follow_rule;
+    if (rule.type == RuleType::DELETE)
+        return !follow_rule;
+    
+    printf("ERROR: unknown rule.type(%d)!!!!\n", rule.type);
+    return false; 
 }
 
 bool processIPv4(void* buffer, FilterRule rule) {
-    iphdr* package = (iphdr*)buffer;
+    iphdr*         package  = (iphdr*)buffer;
     IPProtocolType protocol = (IPProtocolType)package->protocol;
+
+    Package res_package;
+    res_package.src_ip = package->saddr;
+    res_package.dst_ip = package->daddr;
+    res_package.protocol = protocol;
 
     printf("src: %x\n", package->saddr);
     printf("dst: %x\n", package->daddr);
     printf("protocol: ");
-
-    if (rule.dst_ip != kNotStated && rule.dst_ip != package->daddr)
-        return false;
-    if (rule.src_ip != kNotStated && rule.src_ip != package->saddr)
-        return false;
     
-    if (rule.protocol == FilterRuleProtocol::TCP && protocol != IPProtocolType::TCP)
-        return false;
-    if (rule.protocol == FilterRuleProtocol::UDP && protocol != IPProtocolType::UDP)
-        return false;
-    
-    switch (protocol)
-    {
-        case IPProtocolType::ICMP:
+    switch (protocol) {
+        case IPProtocolType::ICMP: {
             printf("ICMP\n");
             break;
-        case IPProtocolType::TCP:
+        }
+        case IPProtocolType::TCP: {
             printf("TCP\n");
-            return processTCP((char*)buffer + sizeof(iphdr), rule);
+            processTCP((char*)buffer + sizeof(iphdr), res_package);
             break;
-        case IPProtocolType::UDP:
+        }
+        case IPProtocolType::UDP: {
             printf("UDP\n");
-            return processUDP((char*)buffer + sizeof(iphdr), rule);
+            processUDP((char*)buffer + sizeof(iphdr), res_package);
             break;
-        case IPProtocolType::STP:
+        }
+        case IPProtocolType::STP: {
             printf("STP\n");
             break;
+        }
     
-        default:
+        default:{
             printf("Something other: %d\n", package->protocol);
             break;
+        }
     }
 
-    return true;
+    return checkRule(res_package, rule);
 }

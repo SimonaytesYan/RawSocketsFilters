@@ -1,14 +1,16 @@
 #pragma once
 
-#include "filter.h"
-
 enum class IPProtocolType {
     ICMP = 1,
     TCP  = 6,
     UDP  = 17,
-    STP  = 118
+    STP  = 118,
+
+    BROCKEN = 255,
 };
 
-// return true, if package follow rule
-//        false otherwise
+struct FilterRule;
+
+// return true, if package should go
+//        false if package shouldn't go
 bool processIPv4(void* buffer, FilterRule rule);
