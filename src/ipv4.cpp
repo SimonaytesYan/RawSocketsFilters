@@ -30,7 +30,7 @@ void processIPv4(void* buffer, size_t size) {
     printf("src: %x\n", package->ip_src);
     printf("dst: %x\n", package->ip_dst);
     printf("protocol: ", package->ip_dst);
-
+    
     switch (package->ip_p)
     {
         case ICMP:
@@ -47,7 +47,7 @@ void processIPv4(void* buffer, size_t size) {
             break;
     
         default:
-            printf("Something other\n");
+            printf("Something other: %d\n", package->ip_p);
             break;
     }
 }
