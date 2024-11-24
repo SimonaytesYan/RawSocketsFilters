@@ -33,8 +33,8 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     int out_sock = createSockets(out_intf);
     // filter(in_sock, out_sock);
 
-    FilterRule rule = {kNotStated, kNotStated, kNotStated, kNotStated, 
-                       FilterRuleProtocol::UDP};
+    FilterRule rule = {0x201000a, kNotStated, kNotStated, kNotStated, 
+                       FilterRuleProtocol::NOT_STATED};
 
     pid_t pid = fork();
     switch(pid)
