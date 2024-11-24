@@ -39,10 +39,12 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
 
     Package rule_package = {kNotStated, kNotStated, 80, 80, 
                             IPProtocolType::BROCKEN};
+    Package rule_package_2 = {0x0a000102, kNotStated, kNotStated, kNotStated, 
+                              IPProtocolType::BROCKEN};
 
-    FilterRule rule = {rule_package, RuleType::PASS};
     std::vector<FilterRule> rules;
-    rules.push_back(rule);
+    rules.push_back({rule_package, RuleType::PASS});
+    rules.push_back({rule_package_2, RuleType::PASS});
 
     FilterList list = {rules, FilterListType::WHITE_LIST};
 
