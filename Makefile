@@ -13,14 +13,17 @@ BIN_FILE = $(BIN)/run
 IN_INTERFACE = 595
 OUT_INTERFACE = 598
 
-all: create_dir $(OBJ)/ipv4.o
-	$(COMPILER) $(C_FLAGS) $(SRC)/main.cpp $(OBJ)/ipv4.o -o $(BIN_FILE)
+all: create_dir $(OBJ)/ipv4.o $(OBJ)/filter.o
+	$(COMPILER) $(C_FLAGS) $(SRC)/main.cpp $(OBJ)/ipv4.o $(OBJ)/filter.o -o $(BIN_FILE)
 
 run:
 	sudo ./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
 
 $(OBJ)/ipv4.o: $(SRC)/ipv4.cpp $(SRC)/ipv4.h
 	$(COMPILER) -c $(C_FLAGS) $(SRC)/ipv4.cpp -o $(OBJ)/ipv4.o
+
+$(OBJ)/filter.o: $(SRC)/filter.cpp $(SRC)/filter.h
+	$(COMPILER) -c $(C_FLAGS) $(SRC)/filter.cpp -o $(OBJ)/filter.o
 
 alpine: configure all
 	./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
