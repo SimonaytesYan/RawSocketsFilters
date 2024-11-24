@@ -41,7 +41,7 @@ void filter(int in_socket, int out_socket, const FilterList& list) {
         switch (protocol)
         {
             case EthProtocolType::IPv4:
-                package_follow_rule = processIPv4(buffer + sizeof(ether_header), rule);
+                package_follow_rule = processIPv4(buffer + sizeof(ether_header), list);
                 printf("IPv4\n");
                 break;
             case EthProtocolType::IPv6:
