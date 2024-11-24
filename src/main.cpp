@@ -68,6 +68,11 @@ int createSockets(int intf_ind) {
     return s;
 }
 
+enum ProtocolType {
+    IPv4 = 0x0800,
+    ARP  = 0x0806
+};
+
 // Function, that filter all traffic, going through given raw socket 
 void filter(int in_socket, int out_socket) {
 
@@ -83,6 +88,23 @@ void filter(int in_socket, int out_socket) {
 			    buffer[6],  buffer[7], buffer[8], buffer[9], buffer[10], buffer[11],
 			    buffer[0],  buffer[1], buffer[2], buffer[3], buffer[4],  buffer[5],
 			    buffer[12], buffer[13]);
+        
+        ProtocolType protocol = (ProtocolType)(buffer[12]*256 + buffer[13]);
+
+        switch (protocol)
+            {
+            case IPv4:
+                printf("IPv4\n");
+                break;
+            
+            case ARP:
+                printf("ARP\n");
+                break;
+
+            default:
+                printf("Something other\n");
+                break;
+        }
 
         write(out_socket, buffer, size);
 	}
