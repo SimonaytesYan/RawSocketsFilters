@@ -34,7 +34,7 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     // filter(in_sock, out_sock);
 
     FilterRule rule = {kNotStated, kNotStated, kNotStated, kNotStated, 
-                       FilterRuleProtocol::NOT_STATED};
+                       FilterRuleProtocol::UDP};
 
     pid_t pid = fork();
     switch(pid)
