@@ -23,7 +23,7 @@ alpine: configure all
 	./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
 
 configure:
-	bash scripts/configure_alpine.sh
+	sh scripts/configure_alpine.sh
 
 clean:
 	rm -r $(BIN)
