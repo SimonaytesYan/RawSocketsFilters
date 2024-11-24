@@ -97,7 +97,7 @@ void filter(int in_socket, int out_socket) {
         switch (protocol)
         {
             case IPv4:
-                processIPv4(buffer, size);
+                processIPv4(buffer + sizeof(ether_header), size);
                 printf("IPv4\n");
                 break;
             case IPv6:
