@@ -44,7 +44,7 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
     std::vector<FilterRule> rules;
     rules.push_back(rule);
 
-    FilterList list = {rules, FilterListType::BLACK_LIST};
+    FilterList list = {rules, FilterListType::WHITE_LIST};
 
     pid_t pid = fork();
     switch(pid)
