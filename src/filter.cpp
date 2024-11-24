@@ -60,6 +60,6 @@ void filter(int in_socket, int out_socket, FilterRule rule) {
         if (package_follow_rule)
             write(out_socket, buffer, size);
         else 
-            printf("Package do not follow rule");
+            printf("\n \033[1;31mbold Package do not follow rule\033[0m\n\n");
 	}
 }
