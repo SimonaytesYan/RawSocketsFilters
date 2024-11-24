@@ -57,10 +57,12 @@ void filter(int in_socket, int out_socket, FilterRule rule) {
                 break;
         }
         
-        if (package_follow_rule)
+        if (package_follow_rule) {
             write(out_socket, buffer, size);
-        else 
-            printf("\n \033[1;31mPackage do not follow rule\033[0m\n\n");
+            printf("\n \033[1;32mPackage passed\033[0m\n\n");
+        }
+        else
+            printf("\n \033[1;31mPackage deleted\033[0m\n\n");
 	}
 }
 
