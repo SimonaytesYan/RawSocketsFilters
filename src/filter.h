@@ -31,6 +31,16 @@ struct Package {
 struct FilterRule {
     Package mask;
     RuleType type;
+
+    FilterRule() {
+        mask.dst_ip = kNotStated;
+        mask.src_ip = kNotStated;
+
+        mask.src_port = kNotStated;
+        mask.dst_port = kNotStated;
+
+        mask.protocol = IPProtocolType::BROKEN;
+    }
 };
 
 enum class FilterListType {

@@ -42,7 +42,7 @@ bool checkRule(Package res_package, FilterRule rule) {
     if (rule.mask.src_ip != kNotStated && res_package.src_ip != rule.mask.src_ip)
         follow_rule = false;
 
-    if (rule.mask.protocol != IPProtocolType::BROCKEN &&
+    if (rule.mask.protocol != IPProtocolType::BROKEN &&
         rule.mask.protocol != res_package.protocol)
         follow_rule = false;
 

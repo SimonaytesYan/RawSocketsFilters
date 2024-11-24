@@ -59,7 +59,7 @@ IPProtocolType strToProtocol(const char* str) {
         return IPProtocolType::TCP;
 
     printf("Error during parsing protocol");
-    return IPProtocolType::BROCKEN;
+    return IPProtocolType::BROKEN;
 }
 
 uint32_t strToIP(const char* str) {
@@ -73,6 +73,7 @@ uint32_t strToIP(const char* str) {
     return res;
 }
 
+
 FilterList getRulesFromFile(const char* filter_rule_file) {
     FilterList list;
 
@@ -80,7 +81,7 @@ FilterList getRulesFromFile(const char* filter_rule_file) {
 
     char buffer[kMaxBufferSize] = {};
     while (true) {
-        FilterRule rule = {};
+        FilterRule rule;
 
         if (fscanf(fp, " %1023[^\n]", buffer) == 0){
             int c = getc(fp);

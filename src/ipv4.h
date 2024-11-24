@@ -6,7 +6,7 @@ enum class IPProtocolType {
     UDP  = 17,
     STP  = 118,
 
-    BROCKEN = 255,
+    BROKEN = 255,
 };
 
 struct FilterList;
