@@ -10,11 +10,14 @@ OBJ = obj
 
 BIN_FILE = $(BIN)/run
 
+IN_INTERFACE = 2
+OUT_INTERFACE = 2
+
 all: create_dir
 	g++ $(C_FLAGS) $(SRC)/main.cpp $(C_FLAGS) -o $(BIN_FILE)
 
 run:
-	sudo ./$(BIN_FILE) 2
+	sudo ./$(BIN_FILE) $(IN_INTERFACE) $(OUT_INTERFACE)
 
 alpine: configure all
 

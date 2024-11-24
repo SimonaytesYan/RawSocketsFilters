@@ -11,26 +11,29 @@ const size_t kSize = 1000;
 
 int createSockets(int intf_ind);
 
-void filter(int socket);
+void filter(int in_socket, int out_socket);
 
 int main(int argc, char** argv) {
     std::cout << "Start program\n";
 
-    if (argc != 2) {
+    if (argc != 3) {
         std::cout << "Error number of arguments";
         return -1;
     }
 
-    int intf_ind = atoi(argv[1]);       // interface index
-    std::cout << "interface index = " << intf_ind << "\n";
+    int in_intf  = atoi(argv[1]);       // input interface index
+    int out_intf = atoi(argv[2]);       // output interface index
+    std::cout << "in interface index = "  << in_intf  << "\n";
+    std::cout << "out interface index = " << out_intf << "\n";
 
-    int s1 = createSockets(intf_ind);
-    filter(s1);
+    int in_sock  = createSockets(in_intf);
+    int out_sock = createSockets(out_intf);
+    filter(in_sock, out_sock);
 }
 
 // Create raw socket with given interface index 
 int createSockets(int intf_ind) {
-    std::cout << "Errno before socket create: " << strerror(errno) << "\n";
+    std::cout << "\nErrno before socket create: " << strerror(errno) << "\n";
     int s = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
     std::cout << "Errno after socket create: " << strerror(errno) << "\n";
 
@@ -39,17 +42,17 @@ int createSockets(int intf_ind) {
 	addr.sll_protocol = htons(ETH_P_ALL);
 	addr.sll_ifindex = intf_ind;
 	bind(s, (sockaddr*)&addr, sizeof(addr));
-    std::cout << "Errno after socket bind: " << strerror(errno) << "\n";
+    std::cout << "Errno after socket bind: " << strerror(errno) << "\n\n";
 
     return s;
 }
 
 // Function, that filter all traffic, going through given raw socket 
-void filter(int socket) {
+void filter(int in_socket, int out_socket) {
 
     char buffer[kSize] = {};
     while (true) {
-		ssize_t size = read(socket, buffer, kSize);
+		ssize_t size = read(in_socket, buffer, kSize);
         if (size == -1) {
             std::cout << strerror(errno) << "\n";
             return;
@@ -59,5 +62,7 @@ void filter(int socket) {
 			    buffer[6],  buffer[7], buffer[8], buffer[9], buffer[10], buffer[11],
 			    buffer[0],  buffer[1], buffer[2], buffer[3], buffer[4],  buffer[5],
 			    buffer[12], buffer[13]);
+
+        write(out_socket, buffer, size);
 	}
 }
