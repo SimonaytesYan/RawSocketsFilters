@@ -11,22 +11,21 @@
 void processUDP(void* buffer, Package& res_package) {
     udphdr* package = (udphdr*)buffer;
 
-    printf("src port: %u\n", ntohs(package->source));
-    printf("dst port: %u\n", ntohs(package->dest));
+    res_package.src_port = ntohs(package->source);
+    res_package.dst_port = ntohs(package->dest);
 
-
-    res_package.dst_port = package->dest;
-    res_package.src_port = package->source;
+    printf("src port: %u\n", res_package.src_port);
+    printf("dst port: %u\n", res_package.dst_port);
 }
 
 void processTCP(void* buffer, Package& res_package) {
     tcphdr* package = (tcphdr*)buffer;
 
-    printf("src port: %d\n", package->source);
-    printf("dst port: %d\n", package->dest);
+    res_package.src_port = ntohs(package->source);
+    res_package.dst_port = ntohs(package->dest);
 
-    res_package.dst_port = package->dest;
-    res_package.src_port = package->source;
+    printf("src port: %u\n", res_package.src_port);
+    printf("dst port: %u\n", res_package.dst_port);
 }
 
 // return true, if package should go
@@ -74,12 +73,12 @@ bool processIPv4(void* buffer, FilterRule rule) {
     IPProtocolType protocol = (IPProtocolType)package->protocol;
 
     Package res_package;
-    res_package.src_ip = package->saddr;
-    res_package.dst_ip = package->daddr;
+    res_package.src_ip = ntohl(package->saddr);
+    res_package.dst_ip = ntohl(package->daddr);
     res_package.protocol = protocol;
 
-    printf("src: %x\n", package->saddr);
-    printf("dst: %x\n", package->daddr);
+    printf("src: %x\n", res_package.src_ip);
+    printf("dst: %x\n", res_package.dst_ip);
     printf("protocol: ");
     
     switch (protocol) {
