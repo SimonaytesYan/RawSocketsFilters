@@ -60,6 +60,14 @@ void filter(int in_socket, int out_socket, FilterRule rule) {
         if (package_follow_rule)
             write(out_socket, buffer, size);
         else 
-            printf("\n \033[1;31mbold Package do not follow rule\033[0m\n\n");
+            printf("\n \033[1;31mPackage do not follow rule\033[0m\n\n");
 	}
+}
+
+void printPackage(Package pkg) {
+    printf("{\n");
+    printf("\tdst = 0x%x:%d\n", pkg.dst_ip, pkg.dst_port);
+    printf("\tsrc = 0x%x:%d\n", pkg.src_ip, pkg.src_port);
+    printf("\tprt = %d\n", pkg.protocol);
+    printf("}\n");
 }

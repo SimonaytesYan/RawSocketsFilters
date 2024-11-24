@@ -37,8 +37,10 @@ void startTwoWayFiltration(int in_intf, int out_intf) {
         return;
     }
 
-    FilterRule rule = {kNotStated, kNotStated, 80, 80, 
-                       IPProtocolType::BROCKEN, RuleType::DELETE};
+    Package rule_package = {kNotStated, kNotStated, 80, 80, 
+                            IPProtocolType::BROCKEN};
+
+    FilterRule rule = {rule_package, RuleType::DELETE};
 
     pid_t pid = fork();
     switch(pid)

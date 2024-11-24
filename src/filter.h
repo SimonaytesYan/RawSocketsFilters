@@ -30,7 +30,9 @@ struct Package {
 
 struct FilterRule {
     Package mask;
-    RuleType type; 
+    RuleType type;
 };
+
+void printPackage(Package pkg);
 
 void filter(int in_socket, int out_socket, FilterRule rule);
