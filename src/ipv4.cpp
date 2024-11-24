@@ -47,8 +47,8 @@ bool checkRule(Package res_package, FilterRule rule) {
         rule.mask.protocol != res_package.protocol)
         follow_rule = false;
 
-    if (rule.mask.protocol == IPProtocolType::TCP ||
-        rule.mask.protocol == IPProtocolType::UDP) {
+    if (res_package.protocol == IPProtocolType::TCP ||
+        res_package.protocol == IPProtocolType::UDP) {
         if (rule.mask.dst_port != kNotStated && 
             res_package.dst_port != rule.mask.dst_port)
             follow_rule = false;
