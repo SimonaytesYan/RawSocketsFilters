@@ -10,8 +10,8 @@
 void processUDP(void* buffer, Package& res_package) {
     udphdr* package = (udphdr*)buffer;
 
-    printf("src port: %d\n", package->source);
-    printf("dst port: %d\n", package->dest);
+    printf("src port: %u\n", package->source);
+    printf("dst port: %u\n", package->dest);
 
     res_package.dst_port = package->dest;
     res_package.src_port = package->source;
