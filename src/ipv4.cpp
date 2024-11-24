@@ -57,6 +57,7 @@ bool checkRule(Package res_package, FilterRule rule) {
             follow_rule = false;
     }
 
+    printf("follow_rule = %d\n", follow_rule);
     if (rule.type == RuleType::PASS)
         return follow_rule;
     if (rule.type == RuleType::DELETE)
